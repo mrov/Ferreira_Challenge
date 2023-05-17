@@ -15,6 +15,9 @@ namespace Ferreira_Challenge.AutoMapper
 
             CreateMap<CreateUserDTO, User>(); // Mapping from CreateUserDTO to User
             CreateMap<User, CreateUserDTO>(); // Mapping from User to CreateUserDTO
+
+            CreateMap<UpdateUserDTO, User>(); // Mapping from UpdateUserDTO to User
+            CreateMap<User, UpdateUserDTO>(); // Mapping from User to UpdateUserDTO
         }
     }
 }

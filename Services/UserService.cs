@@ -28,7 +28,6 @@ namespace Services
             try
             {
                 var userId = await _userRepository.Add(user);
-                _userRepository.SaveChanges();
 
                 return userId;
             }
@@ -40,26 +39,15 @@ namespace Services
             
         }
 
-        public Task<User> UpdateUser(User user)
+        public async Task<User> UpdateUser(UpdateUserDTO user)
         {
-            throw new NotImplementedException();
+            return await _userRepository.Update(user);
         }
 
-        public Task<User> DeleteUser(int id)
+        public async Task<User> DeleteUser(int id)
         {
-            throw new NotImplementedException();
+            return await _userRepository.Delete(id);
         }
 
-        //public async Task<User> UpdateUser(User user)
-        //{
-        //    _userRepository.Update(user);
-        //    _userRepository.SaveChanges();
-        //}
-
-        //public async Task<User> DeleteUser(int id)
-        //{
-        //    _userRepository.Delete(id);
-        //    _userRepository.SaveChanges();
-        //}
     }
 }

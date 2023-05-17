@@ -8,7 +8,7 @@ namespace Services
         Task<User> GetUserById(int id);
         Task<IEnumerable<User>> GetAllUsers();
         Task<int> CreateUser(CreateUserDTO user);
-        Task<User> UpdateUser(User user);
+        Task<User> UpdateUser(UpdateUserDTO user);
         Task<User> DeleteUser(int id);
     }
 }

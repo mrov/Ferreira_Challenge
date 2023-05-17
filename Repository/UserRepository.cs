@@ -18,7 +18,9 @@ public class UserRepository : IUserRepository
 
     public async Task<User> GetById(int id)
     {
-        return await _context.Users.FindAsync(id);
+        var user = await _context.Users.FindAsync(id);
+
+        return user;
     }
 
     public async Task<IEnumerable<User>> GetAll()
@@ -34,36 +36,34 @@ public class UserRepository : IUserRepository
         user.Status = Status.Active;
 
         await _context.Users.AddAsync(user);
+        await _context.SaveChangesAsync();
 
-        return user.Id;
+        var addedUser = _context.Entry(user).Entity;
+
+        return addedUser.Id;
     }
 
-    //public void Update(User user)
-    //{
-    //    _context.Entry(user).State = EntityState.Modified;
-    //}
-
-    //public void Delete(int id)
-    //{
-    //    var user = GetById(id);
-    //    if (user != null)
-    //    {
-    //        _context.Users.Remove(user);
-    //    }
-    //}
-
-    public void SaveChanges()
+    public async Task<User> Update(UpdateUserDTO updateUserDTO)
     {
-        _context.SaveChanges();
+        var user = _mapper.Map<User>(updateUserDTO);
+
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync();
+
+        return user;
     }
 
-    public Task<User> Update(User user)
+    public async Task<User> Delete(int id)
     {
-        throw new NotImplementedException();
-    }
+        var user = await _context.Users.FindAsync(id);
 
-    public Task<User> Delete(int id)
-    {
+        if (user != null)
+        {
+            user.Status = Status.Inactive;
+            await _context.SaveChangesAsync();
+            return user;
+        }
+        
         throw new NotImplementedException();
     }
 
