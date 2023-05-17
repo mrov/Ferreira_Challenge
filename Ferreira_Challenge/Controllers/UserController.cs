@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Models;
+using Models.DTOs.Input;
 using Services;
 
 namespace Ferreira_Challenge.Controllers
@@ -39,7 +40,7 @@ namespace Ferreira_Challenge.Controllers
 
     // POST api/user
     [HttpPost]
-    public async Task<ActionResult<User>> Create(User user)
+    public async Task<ActionResult<User>> Create(CreateUserDTO user)
     {
         if (!ModelState.IsValid)
         {
@@ -48,7 +49,7 @@ namespace Ferreira_Challenge.Controllers
 
         await _userService.CreateUser(user);
 
-            return Ok(user.Id);
+        return Ok(user);
     }
 
     //// PUT api/user/{id}

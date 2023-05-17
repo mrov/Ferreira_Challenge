@@ -1,4 +1,5 @@
 ﻿using Models;
+using Models.DTOs.Input;
 
 namespace Services
 {
@@ -6,7 +7,7 @@ namespace Services
     {
         Task<User> GetUserById(int id);
         Task<IEnumerable<User>> GetAllUsers();
-        Task<int> CreateUser(User user);
+        Task<int> CreateUser(CreateUserDTO user);
         Task<User> UpdateUser(User user);
         Task<User> DeleteUser(int id);
     }

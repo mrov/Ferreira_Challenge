@@ -1,4 +1,5 @@
 ﻿using Models;
+using Models.DTOs.Input;
 using Repository;
 
 namespace Services
@@ -22,7 +23,7 @@ namespace Services
             return await _userRepository.GetAll();
         }
 
-        public async Task<int> CreateUser(User user)
+        public async Task<int> CreateUser(CreateUserDTO user)
         {
             try
             {

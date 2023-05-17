@@ -25,7 +25,7 @@ namespace Repository.Migrations
                     CPF = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
                     DateOfBirth = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false),
                     MotherName = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    Status = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
+                    Status = table.Column<int>(type: "NUMBER(10)", nullable: false),
                     InsertedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false)
                 },

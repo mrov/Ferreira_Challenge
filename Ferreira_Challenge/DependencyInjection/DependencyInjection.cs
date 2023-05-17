@@ -1,9 +1,7 @@
-﻿using Microsoft.AspNetCore.DataProtection.Repositories;
-using Services;
+﻿using Services;
 using Repository;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
-using System.Configuration;
+using AutoMapper;
 
 public static class DependencyInjectionExtensions
 {

@@ -1,13 +1,18 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Models;
+using Models.DTOs.Input;
 using Repository;
+using Utils.Enums;
 
 public class UserRepository : IUserRepository
 {
     private readonly MyDbContext _context;
+    private readonly IMapper _mapper;
 
-    public UserRepository(MyDbContext context)
+    public UserRepository(MyDbContext context, IMapper mapper)
     {
+        _mapper = mapper;
         _context = context;
     }
 
@@ -21,8 +26,13 @@ public class UserRepository : IUserRepository
         return await _context.Users.ToListAsync();
     }
 
-    public async Task<int> Add(User user)
+    public async Task<int> Add(CreateUserDTO createUserDTO)
     {
+        var user = _mapper.Map<User>(createUserDTO);
+
+        user.InsertedAt = DateTime.UtcNow;
+        user.Status = Status.Active;
+
         await _context.Users.AddAsync(user);
 
         return user.Id;
