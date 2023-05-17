@@ -1,11 +1,13 @@
-﻿using Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using Models;
 using Services;
-using System.Web.Http;
 
 namespace Ferreira_Challenge.Controllers
 {
 
-    public class UserController : ApiController
+    [ApiController]
+    [Route("[controller]")]
+    public class UserController : ControllerBase
     {
     private readonly IUserService _userService;
 
@@ -14,22 +16,22 @@ namespace Ferreira_Challenge.Controllers
         _userService = userService;
     }
 
-    // GET api/user/{id}
-    [HttpGet]
-    public IHttpActionResult Get(int id)
-    {
-        var user = _userService.GetUserById(id);
-        if (user == null)
-        {
-            return NotFound();
-        }
+    //// GET api/user/{id}
+    //[HttpGet]
+    //public async Task<ActionResult<User>> GetUserById(int id)
+    //{
+    //    var user = _userService.GetUserById(id);
+    //    if (user == null)
+    //    {
+    //        return NotFound();
+    //    }
 
-        return Ok(user);
-    }
+    //    return Ok(user);
+    //}
 
     // GET api/user
     [HttpGet]
-    public IHttpActionResult GetAll()
+    public async Task<ActionResult<IEnumerable<User>>> GetAll()
     {
         var users = _userService.GetAllUsers();
         return Ok(users);
@@ -37,51 +39,51 @@ namespace Ferreira_Challenge.Controllers
 
     // POST api/user
     [HttpPost]
-    public IHttpActionResult Create(User user)
+    public async Task<ActionResult<User>> Create(User user)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
 
-        _userService.CreateUser(user);
+        await _userService.CreateUser(user);
 
-        return CreatedAtRoute("DefaultApi", new { id = user.Id }, user);
+            return Ok(user.Id);
     }
 
-    // PUT api/user/{id}
-    [HttpPut]
-    public IHttpActionResult Update(int id, User user)
-    {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
+    //// PUT api/user/{id}
+    //[HttpPut]
+    //public async Task<ActionResult<User>> Update(int id, User user)
+    //{
+    //    if (!ModelState.IsValid)
+    //    {
+    //        return BadRequest(ModelState);
+    //    }
 
-        if (id != user.Id)
-        {
-            return BadRequest("Invalid user ID");
-        }
+    //    if (id != user.Id)
+    //    {
+    //        return BadRequest("Invalid user ID");
+    //    }
 
-        _userService.UpdateUser(user);
+    //    _userService.UpdateUser(user);
 
-        return Ok(user);
-    }
+    //    return Ok(user);
+    //}
 
-    // DELETE api/user/{id}
-    [HttpDelete]
-    public IHttpActionResult Delete(int id)
-    {
-        var user = _userService.GetUserById(id);
-        if (user == null)
-        {
-            return NotFound();
-        }
+    //// DELETE api/user/{id}
+    //[HttpDelete]
+    //public async Task<ActionResult> Delete(int id)
+    //{
+    //    var user = _userService.GetUserById(id);
+    //    if (user == null)
+    //    {
+    //        return NotFound();
+    //    }
 
-        _userService.DeleteUser(id);
+    //    _userService.DeleteUser(id);
 
-        return Ok(user);
-    }
+    //    return Ok(user);
+    //}
 }
 
 }

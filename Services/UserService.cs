@@ -12,32 +12,53 @@ namespace Services
             _userRepository = userRepository;
         }
 
-        public User GetUserById(int id)
+        public async Task<User> GetUserById(int id)
         {
-            return _userRepository.GetById(id);
+            return await _userRepository.GetById(id);
         }
 
-        public IEnumerable<User> GetAllUsers()
+        public async Task<IEnumerable<User>> GetAllUsers()
         {
-            return _userRepository.GetAll();
+            return await _userRepository.GetAll();
         }
 
-        public void CreateUser(User user)
+        public async Task<int> CreateUser(User user)
         {
-            _userRepository.Add(user);
-            _userRepository.SaveChanges();
+            try
+            {
+                var userId = await _userRepository.Add(user);
+                _userRepository.SaveChanges();
+
+                return userId;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            
         }
 
-        public void UpdateUser(User user)
+        public Task<User> UpdateUser(User user)
         {
-            _userRepository.Update(user);
-            _userRepository.SaveChanges();
+            throw new NotImplementedException();
         }
 
-        public void DeleteUser(int id)
+        public Task<User> DeleteUser(int id)
         {
-            _userRepository.Delete(id);
-            _userRepository.SaveChanges();
+            throw new NotImplementedException();
         }
+
+        //public async Task<User> UpdateUser(User user)
+        //{
+        //    _userRepository.Update(user);
+        //    _userRepository.SaveChanges();
+        //}
+
+        //public async Task<User> DeleteUser(int id)
+        //{
+        //    _userRepository.Delete(id);
+        //    _userRepository.SaveChanges();
+        //}
     }
 }
