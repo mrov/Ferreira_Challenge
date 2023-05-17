@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.DataProtection.Repositories;
+using Services;
+using Repository;
 
 public static class DependencyInjectionExtensions
 {
@@ -9,10 +11,10 @@ public static class DependencyInjectionExtensions
         // services.AddSingleton(mongoClient);
 
         // Add repository classes
-        // services.AddScoped<ICarsRepository, CarsRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
 
         // Add services
-        // services.AddScoped<ICarsService, CarsService>();
+        services.AddScoped<IUserService, UserService>();
 
     }
 }

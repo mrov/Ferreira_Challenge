@@ -4,10 +4,10 @@ namespace Services
 {
     public interface IUserService
     {
-        Task<IEnumerable<User>> GetUsers();
-        Task<IEnumerable<User>> CreateUser();
-        Task<IEnumerable<User>> EditUser();
-        Task<IEnumerable<User>> DeleteUser();
-
+        User GetUserById(int id);
+        IEnumerable<User> GetAllUsers();
+        void CreateUser(User user);
+        void UpdateUser(User user);
+        void DeleteUser(int id);
     }
 }
