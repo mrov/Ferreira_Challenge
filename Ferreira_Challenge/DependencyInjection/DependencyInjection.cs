@@ -1,7 +1,7 @@
 ﻿using Services;
 using Repository;
 using Microsoft.EntityFrameworkCore;
-using AutoMapper;
+using Services.Auth;
 
 public static class DependencyInjectionExtensions
 {
@@ -18,6 +18,8 @@ public static class DependencyInjectionExtensions
 
         // Add services
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IJwtService, JwtService>();
 
     }
 }

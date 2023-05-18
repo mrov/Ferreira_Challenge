@@ -10,5 +10,6 @@ namespace Repository
         Task<int> Add(CreateUserDTO user);
         Task<User> Update(UpdateUserDTO user);
         Task<User> Delete(int id);
+        Task<User> GetUserByUsernameAsync(string username);
     }
 }

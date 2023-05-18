@@ -4,7 +4,7 @@ using Models;
 using Models.DTOs.Input;
 using Repository;
 using Utils.Enums;
-
+using BCryptNet = BCrypt.Net.BCrypt;
 public class UserRepository : IUserRepository
 {
     private readonly MyDbContext _context;
@@ -34,6 +34,7 @@ public class UserRepository : IUserRepository
 
         user.InsertedAt = DateTime.UtcNow;
         user.Status = Status.Active;
+        user.Password = this.HashPassword(user.Password);
 
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
@@ -46,6 +47,8 @@ public class UserRepository : IUserRepository
     public async Task<User> Update(UpdateUserDTO updateUserDTO)
     {
         var user = _mapper.Map<User>(updateUserDTO);
+
+        user.UpdatedAt = DateTime.UtcNow;
 
         _context.Users.Update(user);
         await _context.SaveChangesAsync();
@@ -65,6 +68,16 @@ public class UserRepository : IUserRepository
         }
         
         throw new NotImplementedException();
+    }
+
+    public async Task<User> GetUserByUsernameAsync(string username)
+    {
+        return await _context.Users.FirstOrDefaultAsync(u => u.Login == username);
+    }
+
+    private string HashPassword(string password)
+    {
+        return BCryptNet.HashPassword(password);
     }
 
 }
