@@ -18,9 +18,9 @@ namespace Services
             return await _userRepository.GetById(id);
         }
 
-        public async Task<IEnumerable<User>> GetAllUsers()
+        public async Task<List<User>> GetFilteredUsers(UserFilterDTO filter)
         {
-            return await _userRepository.GetAll();
+            return await _userRepository.GetFilteredUsers(filter);
         }
 
         public async Task<int> CreateUser(CreateUserDTO user)

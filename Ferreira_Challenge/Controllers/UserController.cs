@@ -33,10 +33,18 @@ namespace Ferreira_Challenge.Controllers
 
         // GET api/user
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetAll()
+        public async Task<IActionResult> GetFilteredUsers([FromQuery] UserFilterDTO filter)
         {
-            var users = _userService.GetAllUsers();
-            return Ok(users);
+            try
+            {
+                List<User> filteredUsers = await _userService.GetFilteredUsers(filter);
+                return Ok(filteredUsers);
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception and return an appropriate error response
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
         }
 
         // POST api/user
