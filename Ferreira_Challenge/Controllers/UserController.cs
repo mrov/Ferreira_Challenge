@@ -7,7 +7,7 @@ using Utils.Enums;
 namespace Ferreira_Challenge.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("Api/[controller]")]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;

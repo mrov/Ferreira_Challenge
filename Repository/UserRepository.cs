@@ -85,6 +85,28 @@ public class UserRepository : IUserRepository
         return await _context.Users.FirstOrDefaultAsync(u => u.Login == username);
     }
 
+    public async Task<string> ResetPassword(User user)
+    {
+        try
+        {
+            string newPassword = GenerateRandomPassword();
+            // Update the user's password in the repository
+            user.Password = HashPassword(newPassword);
+
+            _context.Users.Update(user);
+
+            await _context.SaveChangesAsync();
+
+            return newPassword;
+        }
+        catch (Exception e)
+        {
+
+            throw;
+        }
+        
+    }
+
     #region private
     private string HashPassword(string password)
     {
@@ -133,7 +155,21 @@ public class UserRepository : IUserRepository
         return await query.Skip(skip)
         .Take(PAGE_SIZE)
         .ToListAsync();
-}
+    }
+
+    private string GenerateRandomPassword()
+    {
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        var random = new Random();
+        var password = new char[8];
+
+        for (int i = 0; i < password.Length; i++)
+        {
+            password[i] = chars[random.Next(chars.Length)];
+        }
+
+        return new string(password);
+    }
 
     #endregion
 }

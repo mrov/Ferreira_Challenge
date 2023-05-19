@@ -11,5 +11,6 @@ namespace Repository
         Task<User> Update(UpdateUserDTO user);
         Task<User> Delete(int id);
         Task<User> GetUserByUsernameAsync(string username);
+        Task<string> ResetPassword(User user);
     }
 }
