@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Models;
 using Models.DTOs.Input;
+using Models.DTOs.Output;
 using Repository;
 using System.Drawing.Printing;
 using Utils.Enums;
@@ -26,16 +27,17 @@ public class UserRepository : IUserRepository
         return user;
     }
 
-    public async Task<List<User>> GetFilteredUsers(UserFilterDTO filter)
+    public async Task<List<UserDTO>> GetFilteredUsers(UserFilterDTO filter)
     {
-
         var query = _context.Users.AsQueryable();
 
         query = this.filterQuery(query, filter);
 
         List<User> filteredUsers = await this.Paginate(query, filter.PageNumber);
 
-        return filteredUsers;
+        List<UserDTO> userDtoList = _mapper.Map<List<UserDTO>>(filteredUsers);
+
+        return userDtoList;
     }
 
     public async Task<int> Add(CreateUserDTO createUserDTO)
@@ -73,11 +75,27 @@ public class UserRepository : IUserRepository
         if (user != null)
         {
             user.Status = Status.Inactive;
+            user.UpdatedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
             return user;
         }
 
         throw new NotImplementedException();
+    }
+
+    public async Task DeleteAllUsers()
+    {
+        List<User> users = await _context.Users.ToListAsync();
+
+        users = users.Select(user =>
+        {
+            user.Status = Status.Inactive;
+            return user;
+        }).ToList();
+
+        _context.Users.UpdateRange(users);
+
+        await _context.SaveChangesAsync();
     }
 
     public async Task<User> GetUserByUsernameAsync(string username)

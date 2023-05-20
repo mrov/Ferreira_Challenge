@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Models;
 using Models.DTOs.Input;
+using Models.DTOs.Output;
 using Services;
 using Utils.Enums;
 
@@ -37,7 +38,7 @@ namespace Ferreira_Challenge.Controllers
         {
             try
             {
-                List<User> filteredUsers = await _userService.GetFilteredUsers(filter);
+                List<UserDTO> filteredUsers = await _userService.GetFilteredUsers(filter);
                 return Ok(filteredUsers);
             }
             catch (Exception ex)
@@ -62,7 +63,7 @@ namespace Ferreira_Challenge.Controllers
         }
 
         // PUT api/user/{id}
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<ActionResult<User>> Update(int id, UpdateUserDTO user)
         {
             if (!ModelState.IsValid)
@@ -78,7 +79,7 @@ namespace Ferreira_Challenge.Controllers
         }
 
         // DELETE api/user/{id}
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
             var user = await _userService.GetUserById(id);
@@ -91,6 +92,16 @@ namespace Ferreira_Challenge.Controllers
             var deletedUser = await _userService.DeleteUser(id);
 
             return Ok(deletedUser);
+        }
+
+        // DELETE Api/User/DeleteAll
+        [HttpDelete("DeleteAll")]
+        public async Task<IActionResult> DeleteAllUsers()
+        {
+            await _userService.DeleteAllUsers();
+
+            // Handle the response as needed
+            return Ok();
         }
     }
 }
