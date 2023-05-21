@@ -77,9 +77,11 @@ namespace Ferreira_Challenge.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (_userService.IsUserExists(user.Login))
+            bool canUpdate = await _userService.CanUpdate(id, user.Login);
+
+            if (!canUpdate)
             {
-                return Conflict("User already exists");
+                return Conflict("New User Login already exists");
             }
 
             if (id != user.Id) { return BadRequest("Invalid user ID"); }
@@ -87,6 +89,26 @@ namespace Ferreira_Challenge.Controllers
             await _userService.UpdateUser(user);
 
             return Ok(user);
+        }
+
+
+        [HttpPut("{id}/Status")]
+        public async Task<IActionResult> UpdateUserStatus(int id, [FromBody] UserStatusUpdateDto statusDto)
+        {
+            try
+            {
+                Status status = await _userService.UpdateUserStatus(id, statusDto.Status);
+                return Ok(status);
+            }
+            catch (InvalidOperationException)
+            {
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception and return an appropriate error response
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
         }
 
         // DELETE api/user/{id}

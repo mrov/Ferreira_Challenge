@@ -3,6 +3,7 @@ using Models.DTOs.Input;
 using Models.DTOs.Output;
 using Repository;
 using Utils;
+using Utils.Enums;
 
 namespace Services
 {
@@ -17,7 +18,7 @@ namespace Services
 
         public async Task<User> GetUserById(int id)
         {
-            return await _userRepository.GetById(id);
+            return await _userRepository.GetUserById(id);
         }
 
         public async Task<UserPagination> GetFilteredUsers(UserFilterDTO filter)
@@ -46,6 +47,15 @@ namespace Services
             return await _userRepository.Update(user);
         }
 
+        public async Task<Status> UpdateUserStatus(int id, Status status)
+        {
+            var user = await _userRepository.GetUserById(id);
+            if (user == null)
+                throw new InvalidOperationException($"User with ID {id} not found");
+
+            return await _userRepository.UpdateUserStatus(user, status);
+        }
+
         public async Task<User> DeleteUser(int id)
         {
             return await _userRepository.Delete(id);
@@ -60,6 +70,23 @@ namespace Services
         public bool IsUserExists(string login)
         {
             return _userRepository.IsUserExists(login);
+        }
+
+        public async Task<bool> CanUpdate(int id, string newLogin)
+        {
+            var existingUser = await _userRepository.GetUserById(id);
+
+            if (newLogin == existingUser.Login)
+            {
+                return true;
+            }
+
+            if (newLogin != existingUser.Login && !_userRepository.IsLoginExists(newLogin))
+            {
+                return true;
+            }
+
+            return false;
         }
 
 

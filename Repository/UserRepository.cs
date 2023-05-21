@@ -20,9 +20,9 @@ public class UserRepository : IUserRepository
         _context = context;
     }
 
-    public async Task<User> GetById(int id)
+    public async Task<User> GetUserById(int id)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
+        var user = await _context.Users.FindAsync(id);
 
         return user;
     }
@@ -63,10 +63,28 @@ public class UserRepository : IUserRepository
 
         user.UpdatedAt = DateTime.UtcNow;
 
+        _context.ChangeTracker.Clear();
+
         _context.Users.Update(user);
+
         await _context.SaveChangesAsync();
 
         return user;
+    }
+
+    public async Task<Status> UpdateUserStatus(User user, Status newStatus)
+    {
+
+        user.UpdatedAt = DateTime.UtcNow;
+        user.Status = newStatus;
+
+        _context.ChangeTracker.Clear();
+
+        _context.Users.Update(user);
+
+        await _context.SaveChangesAsync();
+
+        return user.Status;
     }
 
     public async Task<User> Delete(int id)
@@ -124,6 +142,11 @@ public class UserRepository : IUserRepository
         return _context.Users.Any(u => u.Login == login);
     }
 
+    public bool IsLoginExists(string login)
+    {
+        return _context.Users.Any(u => u.Login == login);
+    }
+
     #region private
 
     private string HashPassword(string password)
@@ -155,9 +178,13 @@ public class UserRepository : IUserRepository
             query = query.Where(u => u.DateOfBirth >= filter.StartUpdatedAt && u.DateOfBirth <= filter.EndUpdatedAt);
 
         // TODO this query dont consider if the birthday has already occurred this year
-        if (filter.StartAge != default && filter.EndAge != default)
-            query = query.Where(u => DateTime.Today.Year - u.DateOfBirth.Year > filter.StartAge &&
-                DateTime.Today.Year - u.DateOfBirth.Year < filter.EndAge);
+        if (filter.StartAge != default)
+            query = query.Where(u => DateTime.Today.Year - u.DateOfBirth.Year > filter.StartAge);
+
+        // TODO this query dont consider if the birthday has already occurred this year
+        if (filter.EndAge != default)
+            query = query.Where(u => DateTime.Today.Year - u.DateOfBirth.Year < filter.EndAge);
+
         return query;
     }
 
