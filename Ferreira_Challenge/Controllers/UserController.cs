@@ -3,6 +3,7 @@ using Models;
 using Models.DTOs.Input;
 using Models.DTOs.Output;
 using Services;
+using Utils;
 using Utils.Enums;
 
 namespace Ferreira_Challenge.Controllers
@@ -22,9 +23,9 @@ namespace Ferreira_Challenge.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUserById(int id)
         {
-            var user = _userService.GetUserById(id);
+            var user = await _userService.GetUserById(id);
 
-            if (user.Result == null)
+            if (user == null)
             {
                 return NotFound();
             }
@@ -38,8 +39,8 @@ namespace Ferreira_Challenge.Controllers
         {
             try
             {
-                List<UserDTO> filteredUsers = await _userService.GetFilteredUsers(filter);
-                return Ok(filteredUsers);
+                UserPagination userPagination = await _userService.GetFilteredUsers(filter);
+                return Ok(userPagination);
             }
             catch (Exception ex)
             {
@@ -57,6 +58,11 @@ namespace Ferreira_Challenge.Controllers
                 return BadRequest(ModelState);
             }
 
+            if (_userService.IsUserExists(createUserDTO.Login))
+            {
+                return Conflict("User already exists");
+            }
+
             var userId = await _userService.CreateUser(createUserDTO);
 
             return Ok(new { userId = userId });
@@ -71,9 +77,14 @@ namespace Ferreira_Challenge.Controllers
                 return BadRequest(ModelState);
             }
 
+            if (_userService.IsUserExists(user.Login))
+            {
+                return Conflict("User already exists");
+            }
+
             if (id != user.Id) { return BadRequest("Invalid user ID"); }
 
-            _userService.UpdateUser(user);
+            await _userService.UpdateUser(user);
 
             return Ok(user);
         }

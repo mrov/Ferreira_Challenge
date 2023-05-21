@@ -4,10 +4,10 @@ using Models;
 using Models.DTOs.Input;
 using Models.DTOs.Output;
 using Repository;
-using System.Drawing.Printing;
+using Utils;
 using Utils.Enums;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using BCryptNet = BCrypt.Net.BCrypt;
+
 public class UserRepository : IUserRepository
 {
     private readonly MyDbContext _context;
@@ -22,22 +22,23 @@ public class UserRepository : IUserRepository
 
     public async Task<User> GetById(int id)
     {
-        var user = await _context.Users.FindAsync(id);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
         return user;
     }
 
-    public async Task<List<UserDTO>> GetFilteredUsers(UserFilterDTO filter)
+    public async Task<User> GetUserByUsernameAsync(string login)
+    {
+        return await _context.Users.FirstOrDefaultAsync(u => u.Login == login);
+    }
+
+    public async Task<UserPagination> GetFilteredUsers(UserFilterDTO filter)
     {
         var query = _context.Users.AsQueryable();
 
-        query = this.filterQuery(query, filter);
+        query = filterQuery(query, filter);
 
-        List<User> filteredUsers = await this.Paginate(query, filter.PageNumber);
-
-        List<UserDTO> userDtoList = _mapper.Map<List<UserDTO>>(filteredUsers);
-
-        return userDtoList;
+        return await Paginate(query, filter.PageNumber); ;
     }
 
     public async Task<int> Add(CreateUserDTO createUserDTO)
@@ -46,7 +47,7 @@ public class UserRepository : IUserRepository
 
         user.InsertedAt = DateTime.UtcNow;
         user.Status = Status.Active;
-        user.Password = this.HashPassword(user.Password);
+        user.Password = HashPassword(user.Password);
 
         await _context.Users.AddAsync(user);
         await _context.SaveChangesAsync();
@@ -98,11 +99,6 @@ public class UserRepository : IUserRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<User> GetUserByUsernameAsync(string username)
-    {
-        return await _context.Users.FirstOrDefaultAsync(u => u.Login == username);
-    }
-
     public async Task<string> ResetPassword(User user)
     {
         try
@@ -119,13 +115,17 @@ public class UserRepository : IUserRepository
         }
         catch (Exception e)
         {
-
             throw;
         }
-        
+    }
+
+    public bool IsUserExists(string login)
+    {
+        return _context.Users.Any(u => u.Login == login);
     }
 
     #region private
+
     private string HashPassword(string password)
     {
         return BCryptNet.HashPassword(password);
@@ -156,23 +156,33 @@ public class UserRepository : IUserRepository
 
         // TODO this query dont consider if the birthday has already occurred this year
         if (filter.StartAge != default && filter.EndAge != default)
-            query = query.Where(u => DateTime.Today.Year - u.DateOfBirth.Year >= filter.StartAge &&
-                DateTime.Today.Year - u.DateOfBirth.Year <= filter.EndAge);
+            query = query.Where(u => DateTime.Today.Year - u.DateOfBirth.Year > filter.StartAge &&
+                DateTime.Today.Year - u.DateOfBirth.Year < filter.EndAge);
         return query;
     }
 
-    private async Task<List<User>> Paginate(IQueryable<User> query, int? pageNumber)
+    private async Task<UserPagination> Paginate(IQueryable<User> query, int? pageNumber)
     {
         if (pageNumber == null)
         {
-            pageNumber = 0;
+            pageNumber = 1;
         }
 
         int skip = (int)((pageNumber - 1) * PAGE_SIZE);
 
-        return await query.Skip(skip)
-        .Take(PAGE_SIZE)
-        .ToListAsync();
+        int usersCount = await query.CountAsync();
+
+        int numberOfPages = (int)Math.Floor((decimal)(usersCount / PAGE_SIZE)) + 1;
+
+        List<User> users = await query.Skip(skip)
+                            .Take(PAGE_SIZE)
+                            .ToListAsync();
+
+        List<UserDTO> userDtoList = _mapper.Map<List<UserDTO>>(users);
+
+        UserPagination pageInfo = new(usersCount, numberOfPages, pageNumber, PAGE_SIZE, userDtoList);
+
+        return pageInfo;
     }
 
     private string GenerateRandomPassword()
@@ -189,5 +199,5 @@ public class UserRepository : IUserRepository
         return new string(password);
     }
 
-    #endregion
+    #endregion private
 }

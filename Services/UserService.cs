@@ -2,6 +2,7 @@
 using Models.DTOs.Input;
 using Models.DTOs.Output;
 using Repository;
+using Utils;
 
 namespace Services
 {
@@ -19,7 +20,7 @@ namespace Services
             return await _userRepository.GetById(id);
         }
 
-        public async Task<List<UserDTO>> GetFilteredUsers(UserFilterDTO filter)
+        public async Task<UserPagination> GetFilteredUsers(UserFilterDTO filter)
         {
             return await _userRepository.GetFilteredUsers(filter);
         }
@@ -55,6 +56,11 @@ namespace Services
             await _userRepository.DeleteAllUsers();
         }
 
+
+        public bool IsUserExists(string login)
+        {
+            return _userRepository.IsUserExists(login);
+        }
 
 
     }
