@@ -59,11 +59,12 @@ public class UserRepository : IUserRepository
 
     public async Task<User> Update(UpdateUserDTO updateUserDTO)
     {
+        _context.ChangeTracker.Clear();
+
         var user = _mapper.Map<User>(updateUserDTO);
 
         user.UpdatedAt = DateTime.UtcNow;
 
-        _context.ChangeTracker.Clear();
 
         _context.Users.Update(user);
 
@@ -74,11 +75,10 @@ public class UserRepository : IUserRepository
 
     public async Task<Status> UpdateUserStatus(User user, Status newStatus)
     {
+        _context.ChangeTracker.Clear();
 
         user.UpdatedAt = DateTime.UtcNow;
         user.Status = newStatus;
-
-        _context.ChangeTracker.Clear();
 
         _context.Users.Update(user);
 
@@ -109,6 +109,7 @@ public class UserRepository : IUserRepository
         users = users.Select(user =>
         {
             user.Status = Status.Inactive;
+            user.UpdatedAt = DateTime.UtcNow;
             return user;
         }).ToList();
 
@@ -157,10 +158,10 @@ public class UserRepository : IUserRepository
     private IQueryable<User> filterQuery(IQueryable<User> query, UserFilterDTO filter)
     {
         if (!string.IsNullOrEmpty(filter.Name))
-            query = query.Where(u => u.Name.Contains(filter.Name));
+            query = query.Where(u => u.Name.ToUpper().Contains(filter.Name.ToUpper()));
 
         if (!string.IsNullOrEmpty(filter.Login))
-            query = query.Where(u => u.Login.Contains(filter.Login));
+            query = query.Where(u => u.Login.ToUpper().Contains(filter.Login.ToUpper()));
 
         if (!string.IsNullOrEmpty(filter.CPF))
             query = query.Where(u => u.CPF.Contains(filter.CPF));
@@ -168,14 +169,23 @@ public class UserRepository : IUserRepository
         if (filter.Status != default)
             query = query.Where(u => u.Status == filter.Status);
 
-        if (filter.StartDateBirth != default && filter.EndDateBirth != default)
-            query = query.Where(u => u.DateOfBirth >= filter.StartDateBirth && u.DateOfBirth <= filter.EndDateBirth);
+        if (filter.StartDateBirth != default)
+            query = query.Where(u => u.DateOfBirth >= filter.StartDateBirth);
 
-        if (filter.StartInsertedAt != default && filter.EndInsertedAt != default)
-            query = query.Where(u => u.DateOfBirth >= filter.StartInsertedAt && u.DateOfBirth <= filter.EndInsertedAt);
+        if (filter.EndDateBirth != default)
+            query = query.Where(u =>  u.DateOfBirth <= filter.EndDateBirth);
 
-        if (filter.StartUpdatedAt != default && filter.EndUpdatedAt != default)
-            query = query.Where(u => u.DateOfBirth >= filter.StartUpdatedAt && u.DateOfBirth <= filter.EndUpdatedAt);
+        if (filter.StartInsertedAt != default)
+            query = query.Where(u => u.DateOfBirth >= filter.StartInsertedAt);
+
+        if (filter.EndInsertedAt != default)
+            query = query.Where(u => u.DateOfBirth <= filter.EndInsertedAt);
+
+        if (filter.StartUpdatedAt != default)
+            query = query.Where(u => u.DateOfBirth >= filter.StartUpdatedAt);
+
+        if (filter.EndUpdatedAt != default)
+            query = query.Where(u => u.DateOfBirth <= filter.EndUpdatedAt);
 
         // TODO this query dont consider if the birthday has already occurred this year
         if (filter.StartAge != default)
@@ -197,9 +207,9 @@ public class UserRepository : IUserRepository
 
         int skip = (int)((pageNumber - 1) * PAGE_SIZE);
 
-        int usersCount = await query.CountAsync();
+        decimal usersCount = await query.CountAsync();
 
-        int numberOfPages = (int)Math.Floor((decimal)(usersCount / PAGE_SIZE)) + 1;
+        decimal numberOfPages = (usersCount / PAGE_SIZE) <= 1 ? 1 : Math.Floor((usersCount / PAGE_SIZE)) + 1;
 
         List<User> users = await query.Skip(skip)
                             .Take(PAGE_SIZE)
@@ -207,7 +217,7 @@ public class UserRepository : IUserRepository
 
         List<UserDTO> userDtoList = _mapper.Map<List<UserDTO>>(users);
 
-        UserPagination pageInfo = new(usersCount, numberOfPages, pageNumber, PAGE_SIZE, userDtoList);
+        UserPagination pageInfo = new((int)usersCount, (int)numberOfPages, pageNumber, PAGE_SIZE, userDtoList);
 
         return pageInfo;
     }
