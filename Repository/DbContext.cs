@@ -1,19 +1,22 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Models;
 
 public class MyDbContext : DbContext
 {
-    public MyDbContext(DbContextOptions<MyDbContext> options) : base(options)
+    private readonly IConfiguration configuration;
+    public MyDbContext(DbContextOptions<MyDbContext> options, IConfiguration configuration) : base(options)
     {
+        this.configuration = configuration;
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseOracle("Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=127.0.0.1)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=FREE)));User Id=SYS;Password=password;DBA Privilege=SYSDBA;");
+        string connectionString = configuration.GetConnectionString("DefaultConnection");
+        optionsBuilder.UseOracle(connectionString);
     }
 
     // DbSet properties representing your database tables
     public DbSet<User> Users { get; set; }
 
-    // ...
 }
