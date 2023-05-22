@@ -7,7 +7,7 @@ public static class DependencyInjectionExtensions
 {
     public static void AddDependencies(this IServiceCollection services, IConfiguration config)
     {
-        string connectionString = config.GetConnectionString("ConnectionString");
+        string connectionString = config["ConnectionStrings:DefaultConnection"];
 
         // Configure EF Core with Oracle
         services.AddDbContext<MyDbContext>(options =>
