@@ -7,7 +7,7 @@ This is a sample C#.NET API project that demonstrates the usage of Entity Framew
 
 ### Database oracle setup and connection string configured
 
-You can set the database connection string into the appsettings.json file inside the main project
+#### You can set the database connection string into the appsettings.json file inside the main project
 
 # Getting Started
 
@@ -28,17 +28,24 @@ You can set the database connection string into the appsettings.json file inside
 # API Endpoints
 
 GET     /api/user/{id} - Get a user by ID
+
 GET     /api/user - Get every user based into the filter
+
 POST    /api/user - Create User
+
 PUT     /api/user/{id} - Edit User informations
+
 PUT     /api/user/{id}/Status - Edit Status
+
 DELETE  /api/user/{id} - Delete by ID
+
 DELETE  /api/user/DeleteAll - Delete Every user
 
 POST    /api/auth/Login - To login
+
 POST    /api/auth/Password/Recover - To reset the password
 
-### For more informations run the project and check the swagger https://localhost:7059/swagger/
+##### For more informations run the project and check the swagger https://localhost:7059/swagger/
 
 
 # Dependencies
