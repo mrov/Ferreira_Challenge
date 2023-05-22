@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Models;
 using Models.DTOs.Input;
-using Models.DTOs.Output;
 using Services;
 using Utils;
 using Utils.Enums;
@@ -44,7 +43,6 @@ namespace Ferreira_Challenge.Controllers
             }
             catch (Exception ex)
             {
-                // Handle the exception and return an appropriate error response
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
@@ -106,7 +104,6 @@ namespace Ferreira_Challenge.Controllers
             }
             catch (Exception ex)
             {
-                // Handle the exception and return an appropriate error response
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
@@ -133,7 +130,6 @@ namespace Ferreira_Challenge.Controllers
         {
             await _userService.DeleteAllUsers();
 
-            // Handle the response as needed
             return Ok();
         }
     }

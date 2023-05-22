@@ -1,5 +1,5 @@
-﻿using Models;
-using Models.DTOs.Input;
+﻿using Models.DTOs.Input;
+using Models.DTOs.Output;
 
 namespace Services
 {

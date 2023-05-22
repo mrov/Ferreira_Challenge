@@ -1,4 +1,5 @@
 ﻿using Models;
+using Models.DTOs.Output;
 using Repository;
 using Services.Auth;
 using BCryptNet = BCrypt.Net.BCrypt;

@@ -123,8 +123,9 @@ public class UserRepository : IUserRepository
         try
         {
             string newPassword = GenerateRandomPassword();
-            // Update the user's password in the repository
+
             user.Password = HashPassword(newPassword);
+            user.UpdatedAt = DateTime.UtcNow;
 
             _context.Users.Update(user);
 
@@ -170,22 +171,22 @@ public class UserRepository : IUserRepository
             query = query.Where(u => u.Status == filter.Status);
 
         if (filter.StartDateBirth != default)
-            query = query.Where(u => u.DateOfBirth >= filter.StartDateBirth);
+            query = query.Where(u => u.DateOfBirth.Date >= filter.StartDateBirth);
 
         if (filter.EndDateBirth != default)
-            query = query.Where(u =>  u.DateOfBirth <= filter.EndDateBirth);
+            query = query.Where(u =>  u.DateOfBirth.Date <= filter.EndDateBirth);
 
         if (filter.StartInsertedAt != default)
-            query = query.Where(u => u.DateOfBirth >= filter.StartInsertedAt);
+            query = query.Where(u => u.InsertedAt.Date >= filter.StartInsertedAt);
 
         if (filter.EndInsertedAt != default)
-            query = query.Where(u => u.DateOfBirth <= filter.EndInsertedAt);
+            query = query.Where(u => u.InsertedAt.Date <= filter.EndInsertedAt);
 
         if (filter.StartUpdatedAt != default)
-            query = query.Where(u => u.DateOfBirth >= filter.StartUpdatedAt);
+            query = query.Where(u => u.UpdatedAt.Date >= filter.StartUpdatedAt);
 
         if (filter.EndUpdatedAt != default)
-            query = query.Where(u => u.DateOfBirth <= filter.EndUpdatedAt);
+            query = query.Where(u => u.UpdatedAt.Date <= filter.EndUpdatedAt);
 
         // TODO this query dont consider if the birthday has already occurred this year
         if (filter.StartAge != default)

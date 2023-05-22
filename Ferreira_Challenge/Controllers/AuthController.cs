@@ -31,16 +31,13 @@ namespace Ferreira_Challenge.Controllers
         [HttpPost("Password/Recover")]
         public async Task<IActionResult> RecoverPassword([FromBody] UserRecoveryRequest request)
         {
-            // Validate the request data (e.g., check required fields, validate email format, etc.)
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            // Call the service method to generate a new password based on the provided data
             string newPassword = await _authService.RecoverPassword(request.Login, request.Email, request.DateOfBirth);
 
-            // Optionally, you can send the new password to the user's email or provide it in the response
             return Ok(new { newPassword });
         }
     }
