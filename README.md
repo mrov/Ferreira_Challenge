@@ -1,6 +1,10 @@
 # Ferreira Challenge Back-end
 This is a sample C#.NET API project that demonstrates the usage of Entity Framework Core (EF Core) for data access.
 
+# Related
+
+The front-end of this project can be found https://github.com/mrov/ferreira_front
+
 # Prerequisites
 
 ### .NET SDK installed
