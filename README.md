@@ -11,9 +11,9 @@ This is a sample C#.NET API project that demonstrates the usage of Entity Framew
 
 # Getting Started
 
-1 - Clone the repository: git clone https://github.com/your-username/your-repo.git
+1 - Clone the repository: git clone https://github.com/mrov/Ferreira_Challenge
 
-2 - Navigate to the project directory: cd project-name
+2 - Navigate to the project directory: cd Ferreira_Challenge
 
 3 - Update the database connection string in appsettings.json with your database details.
 
@@ -51,8 +51,11 @@ POST    /api/auth/Password/Recover - To reset the password
 # Dependencies
 
 ASP.NET Core
+
 Entity Framework Core
+
 AutoMapper
+
 BCrypt
 
 # Contributing
