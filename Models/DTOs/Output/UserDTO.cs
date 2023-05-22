@@ -1,15 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Utils.Enums;
+﻿using Utils.Enums;
 
-namespace Models
+namespace Models.DTOs.Output
 {
-    public class User
+    public class UserDTO
     {
-        [Key]
         public int Id { get; set; }
         public string Name { get; set; }
         public string Login { get; set; }
-        public string Password { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
         public string CPF { get; set; }

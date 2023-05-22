@@ -1,18 +1,25 @@
-﻿using Microsoft.AspNetCore.DataProtection.Repositories;
+﻿using Services;
+using Repository;
+using Microsoft.EntityFrameworkCore;
+using Services.Auth;
 
 public static class DependencyInjectionExtensions
 {
     public static void AddDependencies(this IServiceCollection services, IConfiguration config)
     {
-        var mongo_uri = !String.IsNullOrEmpty(Environment.GetEnvironmentVariable("MONGO_URI")) ? Environment.GetEnvironmentVariable("MONGO_URI") : config.GetValue<string>("MongoDb:ConnectionString");
+        string connectionString = config.GetConnectionString("ConnectionString");
 
-        // services.AddSingleton(mongoClient);
+        // Configure EF Core with Oracle
+        services.AddDbContext<MyDbContext>(options =>
+            options.UseOracle(connectionString));
 
         // Add repository classes
-        // services.AddScoped<ICarsRepository, CarsRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
 
         // Add services
-        // services.AddScoped<ICarsService, CarsService>();
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IJwtService, JwtService>();
 
     }
 }
